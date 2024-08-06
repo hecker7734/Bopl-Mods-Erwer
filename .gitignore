@@ -4,6 +4,7 @@
 /obj
 /ghost
 /Debug
+/.vs
 *.dll
 *.png
 *.pdn
