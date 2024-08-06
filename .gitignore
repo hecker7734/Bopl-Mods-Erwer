@@ -10,5 +10,6 @@
 *.csproj
 *.pdb
 *.vsidx
+/EclipseMenu
 modmaker.bat
 modmaker.py
