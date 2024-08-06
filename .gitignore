@@ -8,14 +8,12 @@
 *.dll
 *.png
 *.pdn
-*.csproj
 *.pdb
 *.vsidx
 *.lnk
 *.bin
 *.v2
 *.suo
-*.sln
 *.json
 /EclipseMenu
 modmaker.bat
