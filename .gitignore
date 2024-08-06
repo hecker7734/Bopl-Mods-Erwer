@@ -1,0 +1,14 @@
+/!TOOLS
+/bin
+/build
+/obj
+/ghost
+/Debug
+*.dll
+*.png
+*.pdn
+*.csproj
+*.pdb
+*.vsidx
+modmaker.bat
+modmaker.py

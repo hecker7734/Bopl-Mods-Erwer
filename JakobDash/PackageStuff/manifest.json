@@ -1,0 +1,1 @@
+{"name":"JakobDash","version_number":"1.0.1","website_url":"https://google.com","description":"Reverts the nerf for Dash in the 2.2.4 hotfix; 3.2s - > 4.0s Which made it impossible to stay in the air infinitely; this mod changes it back to 3.2s; become Jakob destroyer of fun","dependencies":["BepInEx-BepInExPack-5.4.2100","AbstractMelon-AntiMatchmaking-1.0.1"]}
