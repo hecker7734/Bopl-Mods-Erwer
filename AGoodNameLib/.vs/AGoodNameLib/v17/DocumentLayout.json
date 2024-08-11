@@ -5,6 +5,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{68D1805D-BCB6-4488-9A9E-B9291D091474}|AGoodNameLib.csproj|d:\\steamlibrary\\steamapps\\common\\bopl battle - modded\\modding\\boplbattletemplate\\agoodnamelib\\til.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{68D1805D-BCB6-4488-9A9E-B9291D091474}|AGoodNameLib.csproj|solutionrelative:til.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{68D1805D-BCB6-4488-9A9E-B9291D091474}|AGoodNameLib.csproj|d:\\steamlibrary\\steamapps\\common\\bopl battle - modded\\modding\\boplbattletemplate\\agoodnamelib\\plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{68D1805D-BCB6-4488-9A9E-B9291D091474}|AGoodNameLib.csproj|solutionrelative:plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,8 +18,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Plugin.cs",
+              "DocumentMoniker": "D:\\SteamLibrary\\steamapps\\common\\Bopl Battle - Modded\\Modding\\BoplBattleTemplate\\AGoodNameLib\\Plugin.cs",
+              "RelativeDocumentMoniker": "Plugin.cs",
+              "ToolTip": "D:\\SteamLibrary\\steamapps\\common\\Bopl Battle - Modded\\Modding\\BoplBattleTemplate\\AGoodNameLib\\Plugin.cs",
+              "RelativeToolTip": "Plugin.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABcAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-11T20:36:42.959Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -24,7 +41,7 @@
               "RelativeDocumentMoniker": "til.cs",
               "ToolTip": "D:\\SteamLibrary\\steamapps\\common\\Bopl Battle - Modded\\Modding\\BoplBattleTemplate\\AGoodNameLib\\til.cs",
               "RelativeToolTip": "til.cs",
-              "ViewState": "AQIAAFsAAAAAAAAAAAAjwHMAAAAJAAAA",
+              "ViewState": "AQIAAIcAAAAAAAAAAAAiwKAAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-05T18:11:24.741Z",
               "EditorCaption": ""

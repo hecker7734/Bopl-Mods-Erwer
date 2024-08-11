@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using BepInEx;
+using BepInEx.Configuration;
 using BoplFixedMath;
 using HarmonyLib;
 using UnityEngine;
@@ -50,7 +51,7 @@ namespace AGoodNameLib
         /// <returns>True if the player's spawns were removed, otherwise false</returns>
         public static bool try_destroy_respawns(Player player)
         {
-            if(player==null) return false;
+            if (player == null) return false;
             player.RespawnPositions = new List<RevivePositionIndicator>();
             return true;
         }
@@ -81,7 +82,7 @@ namespace AGoodNameLib
 
         public static PlayerPhysics Physics_from_body(PlayerBody body)
         {
-            if(body == null) return null;
+            if (body == null) return null;
             return body.physics;
         }
 
@@ -120,13 +121,13 @@ namespace AGoodNameLib
             player.Abilities.Clear();
         }
 
-        public static void set_ability_at_index(Player player, GameObject ability,int  index = 1, String ability_class_name = "BowTransform")
+        public static void set_ability_at_index(Player player, GameObject ability, int index = 1, String ability_class_name = "BowTransform")
         {
             player.Abilities[index] = ability;
             player.AbilityIcons[index] = AbilityClassToSprite(ability_class_name);
         }
 
-        
+
         public static Sprite AbilityClassToSprite(string name)
         {
             RandomAbility ability = new RandomAbility();
@@ -142,7 +143,26 @@ namespace AGoodNameLib
 
     }
 
-    public class math
+    public class auto_config
+    {
+        public static void Slider<T>(ref ConfigEntry<T> configVar, ConfigFile config, string sectionName, string description, T defaultValue, T minValue, T maxValue) where T : IComparable
+        {
+            configVar = config.Bind(sectionName, description, defaultValue, new ConfigDescription(
+                description,
+                new AcceptableValueRange<T>(minValue, maxValue)
+            ));
+        }
+    
+        public static void NumberBox<T>(ref ConfigEntry<T> configVar, ConfigFile config, string sectionName, string description, T defaultValue) where T : IComparable
+        {
+            configVar = config.Bind(sectionName, description, defaultValue, new ConfigDescription(
+                description
+            ));
+        }
+
+    }
+
+    public class math   
     {
         public static int RandomInt(int min, int max)
         {

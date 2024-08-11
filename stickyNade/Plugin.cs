@@ -147,7 +147,8 @@ namespace stickyNade
         {
             bool _continue = false;
             GrenadeAdapter adapter = GrenadeAdapters[__instance];
-            if(adapter != null)
+
+            if(adapter != null && __instance.hasBeenThrown && __instance.DetonatesOnOwner)
             {
                 if (!adapter.hasLanded)
                 {

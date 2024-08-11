@@ -1,0 +1,188 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net46</TargetFramework>
+    <AssemblyName>ConfigAll</AssemblyName>
+    <Description>The Greatest mod you'll need.</Description>
+    <Version>1.0.0</Version>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.Core" Version="5.*" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
+    <PackageReference Include="UnityEngine.Modules" Version="2019.4.5" IncludeAssets="compile" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="AGoodNameLib">
+      <HintPath>..\AGoodNameLib\bin\Debug\net46\AGoodNameLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\Assembly-CSharp_publicized.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.Purchasing.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing.AppleCore">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.Purchasing.AppleCore.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing.AppleMacosStub">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.Purchasing.AppleMacosStub.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing.AppleStub">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.Purchasing.AppleStub.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing.Codeless">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.Purchasing.Codeless.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing.SecurityCore">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.Purchasing.SecurityCore.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing.SecurityStub">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.Purchasing.SecurityStub.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing.Stores">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.Purchasing.Stores.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing.WinRTCore">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.Purchasing.WinRTCore.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing.WinRTStub">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.Purchasing.WinRTStub.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ScreenCaptureModule">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.ScreenCaptureModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.SharedInternalsModule">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.SharedInternalsModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.SpatialTracking">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.SpatialTracking.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.SpriteMaskModule">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.SpriteMaskModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.SpriteShapeModule">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.SpriteShapeModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.StreamingModule">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.StreamingModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.SubstanceModule">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.SubstanceModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.SubsystemsModule">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.SubsystemsModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TerrainModule">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.TerrainModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TerrainPhysicsModule">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.TerrainPhysicsModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextCoreModule">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.TextCoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UNETModule">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.UNETModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestAssetBundleModule">
+      <HintPath>..\..\..\BoplBattle_Data\Managed\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Update="mscorlib">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Update="System">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Update="System.Core">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Update="System.Data">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Update="System.Drawing">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Update="System.IO.Compression.FileSystem">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Update="System.Numerics">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Update="System.Runtime.Serialization">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Update="System.Xml">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Update="System.Xml.Linq">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+</Project>
