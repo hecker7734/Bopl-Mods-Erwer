@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using AGoodNameLib;
 using BepInEx;
 using BepInEx.Configuration;
 using BoplFixedMath;
@@ -19,10 +20,12 @@ namespace configall
 
         internal static ConfigEntry<float> BeamSize;
         internal static ConfigEntry<float> BeamMax_Time;
+        internal static ConfigEntry<int> RevivalCap;
 
         Dictionary<string,string> config_set = new Dictionary<string, string>
         {
-            { "beam", "Beam" }
+            { "beam", "Beam" },
+            { "revive", "Revival" }
         };
 
         /*
@@ -34,6 +37,7 @@ namespace configall
          * 
          * 
          * Beam         X
+         * revival      X
          * */
 
 
@@ -43,10 +47,11 @@ namespace configall
             Logger.LogInfo($"Plugin {PLUGIN_GUID} is loaded!");
             config = Config;
 
-            AGoodNameLib.auto_config.Slider<float>(ref BeamSize, config, config_set["beam"], "Changes beams base size", 1f, 1f, 10f);   
-            AGoodNameLib.auto_config.Slider<float>(ref BeamMax_Time, config, config_set["beam"], "Changes beams max time", 1f, 1f, 10f);
-            
-            
+            AGoodNameLib.auto_config.Slider<float>(ref BeamSize, config, config_set["beam"], "Changes beams base size", 1f, 1f, 100f);   
+            AGoodNameLib.auto_config.Slider<float>(ref BeamMax_Time, config, config_set["beam"], "Changes beams max time", 1f, 1f, 100f);
+            AGoodNameLib.auto_config.Slider<int>(ref RevivalCap, config, config_set["revive"], "Changes cap for revives", 3, 1, 100);
+
+
             var harmony = new Harmony(PLUGIN_GUID);
             harmony.PatchAll(typeof(Patches));
         }
@@ -54,6 +59,34 @@ namespace configall
 
     public class Patches
     {
+        [HarmonyPatch(typeof(Revive), nameof(Revive.SetReviveFlag))]
+        [HarmonyPrefix]
+        public static bool SetReviveFlag(Revive __instance, ref RevivePositionIndicator reviveIndicator, ref Player ___player)
+        {
+            if (reviveIndicator != null && !reviveIndicator.IsDestroyed || ___player.RespawnPositions.Count > Plugin.RevivalCap.Value)
+            {
+                reviveIndicator.End();
+                int num = ___player.RespawnPositions.Count - 1;
+                while (num >= 0 && num < ___player.RespawnPositions.Count)
+                {
+                    if (___player.RespawnPositions.Count > Plugin.RevivalCap.Value  || ___player.RespawnPositions[num] == null || (___player.RespawnPositions[num] != null && ___player.RespawnPositions[num].IsDestroyed))
+                    {
+                        ___player.RespawnPositions.RemoveAt(num);
+                    }
+                    else
+                    {
+                        num--;
+                    }
+                }
+            }
+
+            reviveIndicator = reviveIndicator.GetComponent<RevivePositionIndicator>();
+            ___player = PlayerHandler.Get().GetPlayer(__instance.GetComponent<IPlayerIdHolder>().GetPlayerId());
+            ___player.ExtraLife = ReviveStatus.willReviveOnDeath;
+            ___player.ReviveInstance = __instance;
+            ___player.RespawnPositions.Add(reviveIndicator);
+            return true;
+        }
 
 
         [HarmonyPatch(typeof(Beam), "UpdateBeam")]
