@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using AGoodNameLib;
@@ -15,17 +16,29 @@ namespace configall
     {
         public const string PLUGIN_GUID = "com.erwer.configall";
         public const string PLUGIN_NAME = "configall";
-        public const string PLUGIN_VERSION = "1.0.0";
+        public const string PLUGIN_VERSION = "4.2.0";
         internal static ConfigFile config;
 
         internal static ConfigEntry<float> BeamSize;
         internal static ConfigEntry<float> BeamMax_Time;
+        
         internal static ConfigEntry<int> RevivalCap;
+
+        internal static ConfigEntry<int> dupe_weapon_count;
+        internal static ConfigEntry<int> dupe_projectile_count;
+        internal static ConfigEntry<int> dupe_item_n_smoke;
+        internal static ConfigEntry<int> dupe_players;
+        internal static ConfigEntry<int> dupe_lifespan;
+
+        internal static ConfigEntry<bool> dupe_keep_abilities;
+        internal static ConfigEntry<bool> dupe_remember_platforms;
+
 
         Dictionary<string,string> config_set = new Dictionary<string, string>
         {
             { "beam", "Beam" },
-            { "revive", "Revival" }
+            { "revive", "Revival" },
+            { "dupe", "Duplicator Ray" }
         };
 
         /*
@@ -37,8 +50,9 @@ namespace configall
          * 
          * 
          * Beam         X
-         * revival      X
-         * */
+         * revival      -
+         * Duplicator   X 
+         */
 
 
         private void Awake()
@@ -49,7 +63,20 @@ namespace configall
 
             AGoodNameLib.auto_config.Slider<float>(ref BeamSize, config, config_set["beam"], "Changes beams base size", 1f, 1f, 100f);   
             AGoodNameLib.auto_config.Slider<float>(ref BeamMax_Time, config, config_set["beam"], "Changes beams max time", 1f, 1f, 100f);
-            AGoodNameLib.auto_config.Slider<int>(ref RevivalCap, config, config_set["revive"], "Changes cap for revives", 3, 1, 100);
+            //AGoodNameLib.auto_config.Slider<int>(ref RevivalCap, config, config_set["revive"], "Changes cap for revives", 3, 1, 100);
+
+            AGoodNameLib.auto_config.Slider<int>(ref dupe_weapon_count, config, config_set["dupe"], "Changes Amount of duplicated objects that are WEAPONS..", 3, 3, 10);
+            AGoodNameLib.auto_config.Slider<int>(ref dupe_projectile_count, config, config_set["dupe"], "Changes Amount of duplicated objects that are PROJECTILES.", 4, 4, 10);
+            AGoodNameLib.auto_config.Slider<int>(ref dupe_item_n_smoke, config, config_set["dupe"], "Changes Amount of duplicated objects that are ITEMS/SMOKE.", 1, 1, 10);
+            AGoodNameLib.auto_config.Slider<int>(ref dupe_lifespan, config, config_set["dupe"], "Changes Lifetime of duplicated objects", 1800, 0, 10000);
+            
+            AGoodNameLib.auto_config.Slider<int>(ref dupe_players, config, config_set["dupe"], "Changes Amount of duplicated objects that are PLAYERS.", 1, 1, 16);
+            
+
+            util.CheckBox(ref dupe_keep_abilities, config, config_set["dupe"], "Keep your abilities after getting duped?", false);
+            util.CheckBox(ref dupe_remember_platforms, config, config_set["dupe"], "Remembered platforms are deleted after re-using dupe.", true);
+
+
 
 
             var harmony = new Harmony(PLUGIN_GUID);
@@ -57,9 +84,9 @@ namespace configall
         }
     }
 
-    public class Patches
+    public partial class Patches
     {
-        [HarmonyPatch(typeof(Revive), nameof(Revive.SetReviveFlag))]
+        /*[HarmonyPatch(typeof(Revive), nameof(Revive.SetReviveFlag))]
         [HarmonyPrefix]
         public static bool SetReviveFlag(Revive __instance, ref RevivePositionIndicator reviveIndicator, ref Player ___player)
         {
@@ -86,7 +113,15 @@ namespace configall
             ___player.ReviveInstance = __instance;
             ___player.RespawnPositions.Add(reviveIndicator);
             return true;
+        }*/
+
+        [HarmonyPatch(typeof(ShootDuplicator), nameof(ShootDuplicator.DuplicateObject))]
+        [HarmonyPrefix]
+        public static void DuplicateObjectPatch(ShootDuplicator __instance, ref int lifespan)
+        {
+            lifespan = Plugin.dupe_lifespan.Value;
         }
+
 
 
         [HarmonyPatch(typeof(Beam), "UpdateBeam")]
@@ -129,5 +164,14 @@ namespace configall
 
 
 
+    }
+    public static class util
+    {
+        public static void CheckBox(ref ConfigEntry<bool> configVar, ConfigFile config, string sectionName, string description, bool defaultValue)
+        {
+            configVar = config.Bind(sectionName, description, defaultValue, new ConfigDescription(
+                description
+            ));
+        }
     }
 }

@@ -160,6 +160,14 @@ namespace AGoodNameLib
             ));
         }
 
+        public static void CheckBox(ref ConfigEntry<bool> configVar, ConfigFile config, string sectionName, string description, bool defaultValue)
+        {
+            configVar = config.Bind(sectionName, description, defaultValue, new ConfigDescription(
+                description
+            ));
+        }
+
+
     }
 
     public class math   

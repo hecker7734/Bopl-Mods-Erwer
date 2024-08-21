@@ -1,0 +1,6 @@
+D:\SteamLibrary\steamapps\common\Bopl Battle - Modded\Modding\BoplBattleTemplate\anticheat\obj\Debug\net46\anticheat.csproj.AssemblyReference.cache
+D:\SteamLibrary\steamapps\common\Bopl Battle - Modded\Modding\BoplBattleTemplate\anticheat\obj\Debug\net46\PluginInfo.cs
+D:\SteamLibrary\steamapps\common\Bopl Battle - Modded\Modding\BoplBattleTemplate\anticheat\obj\Debug\net46\anticheat.GeneratedMSBuildEditorConfig.editorconfig
+D:\SteamLibrary\steamapps\common\Bopl Battle - Modded\Modding\BoplBattleTemplate\anticheat\obj\Debug\net46\anticheat.AssemblyInfoInputs.cache
+D:\SteamLibrary\steamapps\common\Bopl Battle - Modded\Modding\BoplBattleTemplate\anticheat\obj\Debug\net46\anticheat.AssemblyInfo.cs
+D:\SteamLibrary\steamapps\common\Bopl Battle - Modded\Modding\BoplBattleTemplate\anticheat\obj\Debug\net46\anticheat.csproj.CoreCompileInputs.cache
