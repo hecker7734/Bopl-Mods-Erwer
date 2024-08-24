@@ -19,6 +19,9 @@ namespace configall
         public const string PLUGIN_VERSION = "4.2.0";
         internal static ConfigFile config;
 
+        //internal static ConfigEntry<float> gust_strength;
+        internal static ConfigEntry<float> gust_radius;
+
         internal static ConfigEntry<float> BeamSize;
         internal static ConfigEntry<float> BeamMax_Time;
         
@@ -38,7 +41,8 @@ namespace configall
         {
             { "beam", "Beam" },
             { "revive", "Revival" },
-            { "dupe", "Duplicator Ray" }
+            { "dupe", "Duplicator Ray" },
+            { "gust", "Gust" }
         };
 
         /*
@@ -52,6 +56,7 @@ namespace configall
          * Beam         X
          * revival      -
          * Duplicator   X 
+         * Gust         X
          */
 
 
@@ -71,7 +76,8 @@ namespace configall
             AGoodNameLib.auto_config.Slider<int>(ref dupe_lifespan, config, config_set["dupe"], "Changes Lifetime of duplicated objects", 1800, 0, 10000);
             
             AGoodNameLib.auto_config.Slider<int>(ref dupe_players, config, config_set["dupe"], "Changes Amount of duplicated objects that are PLAYERS.", 1, 1, 16);
-            
+
+            AGoodNameLib.auto_config.Slider<float>(ref gust_radius, config, config_set["gust"], "Changes the radius of gust.", 5f, 1f, 100f);
 
             util.CheckBox(ref dupe_keep_abilities, config, config_set["dupe"], "Keep your abilities after getting duped?", false);
             util.CheckBox(ref dupe_remember_platforms, config, config_set["dupe"], "Remembered platforms are deleted after re-using dupe.", true);
@@ -114,6 +120,18 @@ namespace configall
             ___player.RespawnPositions.Add(reviveIndicator);
             return true;
         }*/
+
+        [HarmonyPatch(typeof(Shockwave), nameof(Shockwave.Awake))]
+        [HarmonyPrefix]
+        public static void DuplicateObjectPatch(Shockwave __instance)
+        {
+            if (__instance == __instance.isGustAbility)
+            {
+                __instance.radius = (Fix)Plugin.gust_radius.Value;
+            }
+
+        }
+
 
         [HarmonyPatch(typeof(ShootDuplicator), nameof(ShootDuplicator.DuplicateObject))]
         [HarmonyPrefix]
