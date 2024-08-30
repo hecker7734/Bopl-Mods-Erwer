@@ -15,7 +15,6 @@ namespace IUpdateable
         public const string PLUGIN_GUID = "com.erwer.IUpdateable";
         public const string PLUGIN_NAME = "IUpdateable";
         public const string PLUGIN_VERSION = "2.0.0";
-
         private void Awake()
         {
             // Plugin startup logic
@@ -25,6 +24,7 @@ namespace IUpdateable
             harmony.PatchAll(typeof(Patches));
         }
     }
+
 
     public class Patches
     {
@@ -44,25 +44,18 @@ namespace IUpdateable
                         Updater.SimTimePassed += GameTime.FixedTimeStep;
                         Updater.SimTimeSinceLevelLoaded += GameTime.FixedTimeStep;
                         Updater.SimulationTicks++;
-
-                        Updater_i.hitStopFrames--;
-                        Updater_i.SimTimePassed += GameTime.FixedTimeStep;
-                        Updater_i.SimTimeSinceLevelLoaded += GameTime.FixedTimeStep;
-                        Updater_i.SimulationTicks++;
                     }
                     else
                     {
                         Updater.TickSimulation(GameTime.FixedTimeStep);
-                        Updater_i.TickSimulation(GameTime.FixedTimeStep);
                     }
                 }
             }
-            return true; //skip OG.
+            return false; //skip OG.
         }
-
-
     }
 
+    
 
 // Token: 0x020000DE RID: 222
     public interface IUpdatable

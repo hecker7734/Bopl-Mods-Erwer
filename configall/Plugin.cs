@@ -1,6 +1,8 @@
+using System.Linq;  
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using AGoodNameLib;
 using BepInEx;
 using BepInEx.Configuration;
@@ -16,16 +18,16 @@ namespace configall
     {
         public const string PLUGIN_GUID = "com.erwer.configall";
         public const string PLUGIN_NAME = "configall";
-        public const string PLUGIN_VERSION = "4.2.0";
+        public const string PLUGIN_VERSION = "4.2.2";
         internal static ConfigFile config;
 
-        //internal static ConfigEntry<float> gust_strength;
+        internal static ConfigEntry<float> gust_strength;
         internal static ConfigEntry<float> gust_radius;
 
         internal static ConfigEntry<float> BeamSize;
         internal static ConfigEntry<float> BeamMax_Time;
-        
-        internal static ConfigEntry<int> RevivalCap;
+
+        //internal static ConfigEntry<int> RevivalCap;
 
         internal static ConfigEntry<int> dupe_weapon_count;
         internal static ConfigEntry<int> dupe_projectile_count;
@@ -35,6 +37,37 @@ namespace configall
 
         internal static ConfigEntry<bool> dupe_keep_abilities;
         internal static ConfigEntry<bool> dupe_remember_platforms;
+
+        // Assuming Fix is a class or struct that has a constructor accepting a float
+        public static Dictionary<string, float> allAbilities = new Dictionary<string, float>
+{
+    { "Dash", 4f },
+    { "Bow", 2.5f },
+    { "Grenade", 2.25f },
+    { "Engine", 3.5f },
+    { "Gust", 5f },
+    { "Blink gun", 2.5f },
+    { "Growth ray", 2.5f },
+    { "Missile", 4f },
+    { "Rock", 2f },
+    { "Spike", 3f },
+    { "Smoke", 3f },
+    { "Time stop", 3f },
+    { "Platform", 6f },
+    { "Roll", 3.5f },
+    { "Revival", 10f },
+    { "Shrink ray", 2.5f },
+    { "Black hole", 4.5f },
+    { "Meteor", 4f },
+    { "Push", 1f },
+    { "Throw", 1f },
+    { "Tesla coil", 1f },
+    { "Mine", 4.5f },
+    { "Beam", 5.5f },
+    { "Drill", 4f },
+    { "Duplicator", 4f }
+};
+        public static Dictionary<string, ConfigEntry<float>> configEntries = new Dictionary<string, ConfigEntry<float>>();
 
 
         Dictionary<string,string> config_set = new Dictionary<string, string>
@@ -78,49 +111,36 @@ namespace configall
             AGoodNameLib.auto_config.Slider<int>(ref dupe_players, config, config_set["dupe"], "Changes Amount of duplicated objects that are PLAYERS.", 1, 1, 16);
 
             AGoodNameLib.auto_config.Slider<float>(ref gust_radius, config, config_set["gust"], "Changes the radius of gust.", 5f, 1f, 100f);
+            AGoodNameLib.auto_config.Slider<float>(ref gust_strength, config, config_set["gust"], "Changes the strength (multiplier) of gust.", 1f, 1f, 100f);
+
+            // Assuming 'config' is an instance of a configuration manager or similar
+            foreach (var cfg in allAbilities)
+            {
+                // Bind or load the config entry
+                ConfigEntry<float> configEntry = config.Bind(
+                    "Cooldowns",
+                    cfg.Key,
+                    cfg.Value,
+                    new ConfigDescription($"Cooldown for {cfg.Key} ability")
+                );
+
+                // Optionally, you might want to store these entries if needed later
+                // For example, in a dictionary to easily access them by ability name
+                configEntries[cfg.Key] = configEntry;
+            }
+
 
             util.CheckBox(ref dupe_keep_abilities, config, config_set["dupe"], "Keep your abilities after getting duped?", false);
             util.CheckBox(ref dupe_remember_platforms, config, config_set["dupe"], "Remembered platforms are deleted after re-using dupe.", true);
 
-
-
-
             var harmony = new Harmony(PLUGIN_GUID);
             harmony.PatchAll(typeof(Patches));
         }
+
     }
 
     public partial class Patches
     {
-        /*[HarmonyPatch(typeof(Revive), nameof(Revive.SetReviveFlag))]
-        [HarmonyPrefix]
-        public static bool SetReviveFlag(Revive __instance, ref RevivePositionIndicator reviveIndicator, ref Player ___player)
-        {
-            if (reviveIndicator != null && !reviveIndicator.IsDestroyed || ___player.RespawnPositions.Count > Plugin.RevivalCap.Value)
-            {
-                reviveIndicator.End();
-                int num = ___player.RespawnPositions.Count - 1;
-                while (num >= 0 && num < ___player.RespawnPositions.Count)
-                {
-                    if (___player.RespawnPositions.Count > Plugin.RevivalCap.Value  || ___player.RespawnPositions[num] == null || (___player.RespawnPositions[num] != null && ___player.RespawnPositions[num].IsDestroyed))
-                    {
-                        ___player.RespawnPositions.RemoveAt(num);
-                    }
-                    else
-                    {
-                        num--;
-                    }
-                }
-            }
-
-            reviveIndicator = reviveIndicator.GetComponent<RevivePositionIndicator>();
-            ___player = PlayerHandler.Get().GetPlayer(__instance.GetComponent<IPlayerIdHolder>().GetPlayerId());
-            ___player.ExtraLife = ReviveStatus.willReviveOnDeath;
-            ___player.ReviveInstance = __instance;
-            ___player.RespawnPositions.Add(reviveIndicator);
-            return true;
-        }*/
-
         [HarmonyPatch(typeof(Shockwave), nameof(Shockwave.Awake))]
         [HarmonyPrefix]
         public static void DuplicateObjectPatch(Shockwave __instance)
@@ -128,6 +148,8 @@ namespace configall
             if (__instance == __instance.isGustAbility)
             {
                 __instance.radius = (Fix)Plugin.gust_radius.Value;
+                __instance.defaultForce = (Fix)Plugin.gust_strength.Value;
+                __instance.platformForce = (Fix)Plugin.gust_strength.Value;
             }
 
         }
@@ -180,9 +202,49 @@ namespace configall
             __instance.timeSinceBeamStart += simDeltaTime /  (beamWidthMultiplier + (Fix)Plugin.BeamMax_Time.Value);
         }
 
+        [HarmonyPatch(typeof(Ability), nameof(Ability.Awake))]
+        [HarmonyPostfix]
+        public static void AbiltiyPatch(Ability __instance)
+        {
+            // Clean up the ability name by removing "(Clone)" if it exists
+            string abilityName = __instance.name;
+            string suffix = "(Clone)";
+            if (abilityName.EndsWith(suffix))
+            {
+                abilityName = abilityName.Substring(0, abilityName.Length - suffix.Length).Trim();
+            }
 
+            // Check if configEntries is initialized
+            if (Plugin.configEntries == null)
+            {
+                Debug.LogError("Plugin.configEntries is null.");
+                return;
+            }
+
+            // Attempt to retrieve the config entry for the ability
+            if (Plugin.configEntries.TryGetValue(abilityName, out var configEntry))
+            {
+                // Check if configEntry is null
+                if (configEntry == null)
+                {
+                    Debug.LogError($"Config entry for '{abilityName}' is null.");
+                    return;
+                }
+
+                // Apply the cooldown
+                __instance.Cooldown = (Fix)configEntry.Value;
+            }
+            else
+            {
+                Debug.LogWarning($"No config entry found for ability '{abilityName}'.");
+            }
+        }
 
     }
+
+
+
+
     public static class util
     {
         public static void CheckBox(ref ConfigEntry<bool> configVar, ConfigFile config, string sectionName, string description, bool defaultValue)
@@ -191,5 +253,7 @@ namespace configall
                 description
             ));
         }
+
+
     }
 }

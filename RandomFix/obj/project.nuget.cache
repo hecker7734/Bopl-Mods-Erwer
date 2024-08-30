@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ZRCmPBLISCQ=",
+  "dgSpecHash": "87ONEsg/zKY=",
   "success": true,
-  "projectFilePath": "D:\\SteamLibrary\\steamapps\\common\\Bopl Battle - Modded\\Modding\\BoplBattleTemplate\\configall\\configall.csproj",
+  "projectFilePath": "D:\\SteamLibrary\\steamapps\\common\\Bopl Battle - Modded\\Modding\\BoplBattleTemplate\\RandomFix\\RandomFix.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\tazri\\.nuget\\packages\\bepinex.analyzers\\1.0.8\\bepinex.analyzers.1.0.8.nupkg.sha512",
     "C:\\Users\\tazri\\.nuget\\packages\\bepinex.baselib\\5.4.20\\bepinex.baselib.5.4.20.nupkg.sha512",

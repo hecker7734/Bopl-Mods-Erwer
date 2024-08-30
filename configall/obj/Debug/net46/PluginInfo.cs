@@ -4,6 +4,6 @@ namespace configall
     {
         public const string PLUGIN_GUID = "ConfigAll";
         public const string PLUGIN_NAME = "ConfigAll";
-        public const string PLUGIN_VERSION = "1.0.0";
+        public const string PLUGIN_VERSION = "4.2.2";
     }
 }
