@@ -143,6 +143,34 @@ namespace AGoodNameLib
 
     }
 
+    public static class texTils
+    {
+        private static Texture2D LoadTexture(string path)
+        {
+            byte[] array = File.ReadAllBytes(path);
+            Texture2D val = new Texture2D(2, 2);
+            ImageConversion.LoadImage(val, array);
+            return val;
+        }
+        public static Texture2D LoadTextureFromResource(string resourceName)
+        {
+            // Get the resource stream
+            Stream stream = typeof(texTils).Assembly.GetManifestResourceStream(resourceName);
+            if (stream == null)
+            {
+                Debug.LogError("Resource not found: " + resourceName);
+                return null;
+            }
+
+            // Load the texture from the stream
+            byte[] array = new byte[stream.Length];
+            stream.Read(array, 0, (int)stream.Length);
+            Texture2D texture = new Texture2D(2, 2);
+            ImageConversion.LoadImage(texture, array);
+            return texture;
+        }
+    }
+
     public class auto_config
     {
         public static void Slider<T>(ref ConfigEntry<T> configVar, ConfigFile config, string sectionName, string description, T defaultValue, T minValue, T maxValue) where T : IComparable

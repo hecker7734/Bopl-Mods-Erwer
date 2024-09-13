@@ -10,3 +10,6 @@ D:\SteamLibrary\steamapps\common\Bopl Battle - Modded\Modding\BoplBattleTemplate
 D:\SteamLibrary\steamapps\common\Bopl Battle - Modded\Modding\BoplBattleTemplate\AtomMine\obj\Debug\net46\AtomMine.pdb
 D:\SteamLibrary\steamapps\common\Bopl Battle - Modded\Modding\BoplBattleTemplate\AtomMine\obj\Debug\net46\AtomMine.mine_texture.resources
 D:\SteamLibrary\steamapps\common\Bopl Battle - Modded\Modding\BoplBattleTemplate\AtomMine\obj\Debug\net46\AtomMine.csproj.GenerateResource.cache
+D:\SteamLibrary\steamapps\common\Bopl Battle - Modded\Modding\BoplBattleTemplate\AtomMine\bin\Debug\net46\AGoodNameLib.dll
+D:\SteamLibrary\steamapps\common\Bopl Battle - Modded\Modding\BoplBattleTemplate\AtomMine\bin\Debug\net46\AGoodNameLib.pdb
+D:\SteamLibrary\steamapps\common\Bopl Battle - Modded\Modding\BoplBattleTemplate\AtomMine\obj\Debug\net46\AtomMine.csproj.Up2Date

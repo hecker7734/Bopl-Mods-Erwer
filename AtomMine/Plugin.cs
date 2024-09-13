@@ -2,6 +2,7 @@ using System;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
+using AGoodNameLib;
 using BepInEx;
 using BepInEx.Configuration;
 using BoplFixedMath;
@@ -58,6 +59,19 @@ namespace AtomMine
 
             Updater.DestroyFix(__instance.gameObject);
             return false; //skips orignal function
+        }
+        [HarmonyPatch(typeof(Mine),nameof(Mine.Awake))]
+        [HarmonyPostfix]
+        public static void d(Mine __instance)
+        {
+            // Load the texture
+            Texture2D tex = texTils.LoadTextureFromResource("AGoodNameLib.Resources.mine_texture.mine_new_tex");
+                // Create a sprite from the texture
+                Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+
+                // Get the SpriteRenderer component and assign the sprite
+                SpriteRenderer spriteRenderer = __instance.GetComponent<SpriteRenderer>();
+                spriteRenderer.sprite = sprite;
         }
     }
 }

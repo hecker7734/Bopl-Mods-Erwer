@@ -21,6 +21,9 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Reference Include="AGoodNameLib">
+      <HintPath>..\AGoodNameLib\bin\Debug\net46\AGoodNameLib.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\BoplBattle_Data\Managed\Assembly-CSharp_publicized.dll</HintPath>
       <Private>False</Private>
