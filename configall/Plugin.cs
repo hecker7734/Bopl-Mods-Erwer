@@ -1,4 +1,4 @@
-using System.Linq;  
+using System.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace configall
     {
         public const string PLUGIN_GUID = "com.erwer.configall";
         public const string PLUGIN_NAME = "configall";
-        public const string PLUGIN_VERSION = "4.2.2";
+        public const string PLUGIN_VERSION = "4.3.3";
         internal static ConfigFile config;
 
         internal static ConfigEntry<float> gust_strength;
@@ -37,6 +37,9 @@ namespace configall
 
         internal static ConfigEntry<bool> dupe_keep_abilities;
         internal static ConfigEntry<bool> dupe_remember_platforms;
+
+        internal static ConfigEntry<bool> tapbow;
+        internal static ConfigEntry<bool> tapnade;
 
         // Assuming Fix is a class or struct that has a constructor accepting a float
         public static Dictionary<string, float> allAbilities = new Dictionary<string, float>
@@ -70,12 +73,13 @@ namespace configall
         public static Dictionary<string, ConfigEntry<float>> configEntries = new Dictionary<string, ConfigEntry<float>>();
 
 
-        Dictionary<string,string> config_set = new Dictionary<string, string>
+        Dictionary<string, string> config_set = new Dictionary<string, string>
         {
             { "beam", "Beam" },
             { "revive", "Revival" },
             { "dupe", "Duplicator Ray" },
-            { "gust", "Gust" }
+            { "gust", "Gust" },
+            { "tap", "tap items"}
         };
 
         /*
@@ -99,7 +103,7 @@ namespace configall
             Logger.LogInfo($"Plugin {PLUGIN_GUID} is loaded!");
             config = Config;
 
-            AGoodNameLib.auto_config.Slider<float>(ref BeamSize, config, config_set["beam"], "Changes beams base size", 1f, 1f, 100f);   
+            AGoodNameLib.auto_config.Slider<float>(ref BeamSize, config, config_set["beam"], "Changes beams base size", 1f, 1f, 100f);
             AGoodNameLib.auto_config.Slider<float>(ref BeamMax_Time, config, config_set["beam"], "Changes beams max time", 1f, 1f, 100f);
             //AGoodNameLib.auto_config.Slider<int>(ref RevivalCap, config, config_set["revive"], "Changes cap for revives", 3, 1, 100);
 
@@ -107,7 +111,7 @@ namespace configall
             AGoodNameLib.auto_config.Slider<int>(ref dupe_projectile_count, config, config_set["dupe"], "Changes Amount of duplicated objects that are PROJECTILES.", 4, 4, 10);
             AGoodNameLib.auto_config.Slider<int>(ref dupe_item_n_smoke, config, config_set["dupe"], "Changes Amount of duplicated objects that are ITEMS/SMOKE.", 1, 1, 10);
             AGoodNameLib.auto_config.Slider<int>(ref dupe_lifespan, config, config_set["dupe"], "Changes Lifetime of duplicated objects", 1800, 0, 10000);
-            
+
             AGoodNameLib.auto_config.Slider<int>(ref dupe_players, config, config_set["dupe"], "Changes Amount of duplicated objects that are PLAYERS.", 1, 1, 16);
 
             AGoodNameLib.auto_config.Slider<float>(ref gust_radius, config, config_set["gust"], "Changes the radius of gust.", 5f, 1f, 100f);
@@ -133,6 +137,9 @@ namespace configall
             util.CheckBox(ref dupe_keep_abilities, config, config_set["dupe"], "Keep your abilities after getting duped?", false);
             util.CheckBox(ref dupe_remember_platforms, config, config_set["dupe"], "Remembered platforms are deleted after re-using dupe.", true);
 
+            util.CheckBox(ref tapbow, config, config_set["tap"], "Instantly Charge Bows", false);
+            util.CheckBox(ref tapnade, config, config_set["tap"], "Instantly Charge Grenades", false);
+
             var harmony = new Harmony(PLUGIN_GUID);
             harmony.PatchAll(typeof(Patches));
         }
@@ -141,6 +148,29 @@ namespace configall
 
     public partial class Patches
     {
+        [HarmonyPatch(typeof(BowTransform), nameof(BowTransform.OnEnterAbility))]
+        [HarmonyPostfix]
+        public static void patch_tap(BowTransform __instance)
+        {
+            if (Plugin.tapbow.Value)
+            {
+                __instance.loadingFrame = 4;
+            }
+        }
+
+        [HarmonyPatch(typeof(ThrowItem2), nameof(ThrowItem2.Awake))]
+        [HarmonyPostfix]
+        public static void patch_tap_grenade(ThrowItem2 __instance)
+        {
+            if(Plugin.tapnade.Value)
+            {
+                __instance.ThrowForceGainSpeed = (Fix)900L;
+            }
+        }
+
+
+
+
         [HarmonyPatch(typeof(Shockwave), nameof(Shockwave.Awake))]
         [HarmonyPrefix]
         public static void DuplicateObjectPatch(Shockwave __instance)
@@ -197,9 +227,9 @@ namespace configall
             {
                 __instance.beamIndex = -1;
             }
-            
+
             //custom time based on the width + beam time max.
-            __instance.timeSinceBeamStart += simDeltaTime /  (beamWidthMultiplier + (Fix)Plugin.BeamMax_Time.Value);
+            __instance.timeSinceBeamStart += simDeltaTime / (beamWidthMultiplier + (Fix)Plugin.BeamMax_Time.Value);
         }
 
         [HarmonyPatch(typeof(Ability), nameof(Ability.Awake))]
