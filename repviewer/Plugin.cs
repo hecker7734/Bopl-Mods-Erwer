@@ -119,7 +119,7 @@ namespace repviewer
 
                     textBuilder.Append("<#FF0000>Viewing Replay...<#FFFFFF>");
                     textBuilder.Append(" ");
-                    textBuilder.Append("<#FFF000>Tilda(~) to leave replay.<#FFFFFF>");
+                    textBuilder.Append("<#FFF000>Tilda(~) to leave replay ( Don't leave using ESCAPE )<#FFFFFF>");
                     textBuilder.Append(" ");
                     textBuilder.Append(replaymenu_toggled_fast ? "<#00FF00>2xSpeed(F1)<#FFFFFF>" : "<#FF0000>2x Speed(F1)<#FFFFFF>");
                     textBuilder.Append(" ");
@@ -133,10 +133,15 @@ namespace repviewer
                     float height = ((Rect)(rect)).height;
                     rect = ((Component)canv).GetComponent<RectTransform>().rect;
                     float width = ((Rect)(rect)).width;
-                    int num = 3;
+                    int num = 20;
                     location.anchoredPosition = new Vector2(width / 2f - 325f, height / 2f - 100f - (float)num);
                 }
                 return;
+            } else if  (!GameLobby.isPlayingAReplay)
+            {
+                GameObject.Destroy(replaymenu_text);
+                Plugin.replaymenu_toggled_pause = false;
+                Plugin.replaymenu_toggled_fast = false;
             }
             canvas = GameObject.Find("Canvas (1)");
             if (canvas == null)
@@ -298,6 +303,7 @@ namespace repviewer
         private static void run_replay(string replayName)
         {
             // Set the replay path for the Host class
+            Host.recordReplay = false; //don't attempt to clone replays.
             Host.replayPath = Path.Combine(replays_path, replayName); // Assuming replayName is the file name
             Debug.Log($"Loading replay from: {Host.replayPath}");
             Host curhost = GameObject.Find("networkClient").GetComponent<Host>();
@@ -312,6 +318,7 @@ namespace repviewer
                 {
                     // create players.
                     StartRequestPacket startRequestPacket;
+
                     curhost.replay = NetworkTools.ReadCompressedReplay(File.ReadAllBytes(text), out startRequestPacket);
                     SteamManager.startParameters = startRequestPacket;
                     GameLobby.isPlayingAReplay = true;
@@ -320,6 +327,14 @@ namespace repviewer
                     {
                         curhost.clients.Add(new Client(1, new SteamConnection()));
                     }
+
+                    float duration = duration_of_replay(File.ReadAllBytes(text));
+                    Debug.Log( "Raw Duration : " + duration   );
+                    Debug.Log( "Second Guess Duration : " + Math.Round(duration / 79));
+
+
+
+                    
                 }
 
 
@@ -333,33 +348,28 @@ namespace repviewer
 
             }
         }
-    }
+        public static float duration_of_replay(byte[] compressedReplay)
+        {
+            StartRequestPacket outreq;
+            List<InputPacketQuad> decompressed = new List<InputPacketQuad>(NetworkTools.ReadCompressedReplay(compressedReplay, out outreq));
+            return decompressed.Count;
+        }
 
+    }
 
     public class Patches
     {
-       /* [HarmonyPatch(typeof(Host), nameof(Host.SaveReplay))]
-        [HarmonyPrefix]
-        public static bool enhanced_replay_saving(Host __instance)
-        {
-            Updater.gameHasStopped = true;
-            if (Host.recordReplay && __instance.inputRecording.Count != 0 && !(SteamManager.instance == null))
-            {
-                System.Random rnd = new System.Random();
-                int month = rnd.Next(0, 9999999);
-                string now = DateTime.Now.ToString("MMddyy");
-                string arg = Application.persistentDataPath + "/replays/";
-                byte[] bytes = NetworkTools.SerializeReplay_compressed(__instance.inputRecording, __instance.EncodedStartRequest);
-                Host.replaysSaved++;
-                //replaced Host.replaysSaved with now;
-                string str = arg + now + ".rep";
-                File.WriteAllBytes(arg + now + ".rep", bytes);
-                Debug.Log("saved replay " + str);
-            }
-            __instance.inputRecording.Clear();
 
-            return false;
-        }*/
+        
+
+
+        [HarmonyPatch(typeof(CharacterSelectHandler_online), "Awake")]
+        static void Prefix(CharacterSelectBox __instance)
+        {
+           CharacterSelectHandler_online.clientSideMods_you_can_increment_this_to_enable_matchmaking_for_your_mods__please_dont_use_it_to_cheat_thats_really_cringe_especially_if_its_desyncing_others___you_didnt_even_win_on_your_opponents_screen___I_cannot_imagine_a_sadder_existence+=2;
+        }
+         
+        
 
 
         [HarmonyPatch(typeof(Host), nameof(Host.PlayReplayUpdate))]
@@ -370,8 +380,12 @@ namespace repviewer
             if(Keyboard.current.backquoteKey.wasPressedThisFrame)
             {
                 __instance.clients.Clear();
+                GameLobby.isPlayingAReplay = false;
+                Host.replayPath = "";
                 Debug.Log("A client was disconnected, abandoning lobby");
                 GameSessionHandler.LeaveGame(abandonLobbyEntirely: true);
+                Host.recordReplay = true;
+                Host.replayLevelsLoaded++;
             }
 
             __instance.timePassed += Time.deltaTime;
