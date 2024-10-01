@@ -20,5 +20,10 @@ namespace AGoodNameLib
             var harmony = new Harmony(PLUGIN_GUID);
             harmony.PatchAll(typeof(Patches));
         }
+
+        public void Update()
+        {
+            Projectile.init();
+        }
     }
 }

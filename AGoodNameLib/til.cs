@@ -140,7 +140,6 @@ namespace AGoodNameLib
             RandomAbility rng = new RandomAbility();
             return RandomAbility.GetRandomAbilityPrefab(rng.abilityIcons, rng.abilityIcons);
         }
-
     }
 
     public static class texTils
@@ -214,4 +213,53 @@ namespace AGoodNameLib
             set { GameSessionHandler.SuddenDeathInProgress = value; }
         }
     }
+
+    
+    public static class Projectile
+    {
+        public static int next_id = 1;
+        public static List<types> projectiles = new List<types>();
+
+        public static BoplBody arrow_prefab;
+
+        public enum types
+        {
+            None,
+            Arrow,
+            Grenade,
+            Mine,
+        }
+
+        public static void init()
+        {
+            try
+            {
+                BowTransform bowtransform = new BowTransform();
+                arrow_prefab = bowtransform.Arrow;
+                if (arrow_prefab == null)
+                {
+                    Debug.LogError("Arrow prefab not assigned in BowTransform!");
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("LN241 error: " + e);
+            }
+        }
+
+
+
+        public static void create_arrow(Vec2 position, Fix scale, Vec2 rotation_creation, Fix arrow_rotation)
+        {
+            Vec2 spawnPos = position;
+            Fix arrowVelocity = Fix.One + (scale - Fix.One) / (Fix)2L;
+            BoplBody arrow = FixTransform.InstantiateFixed<BoplBody>(arrow_prefab, rotation_creation); // create arrow
+            arrow.Scale = scale;
+            arrow.rotation = arrow_rotation;
+            arrow.position = spawnPos;
+        }
+    }
+
+
+
 }
