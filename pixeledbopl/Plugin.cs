@@ -85,7 +85,7 @@ namespace pixeledbopl
                 Logger.LogInfo("AssetBundle unloaded successfully!");
             }
         }
-    }
+    } 
 
     public class CameraEffect : MonoBehaviour
     {
