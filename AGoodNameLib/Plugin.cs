@@ -13,17 +13,12 @@ namespace AGoodNameLib
         public const string PLUGIN_GUID = "com.erwer.AGoodNameLib";
         public const string PLUGIN_NAME = "AGoodNameLib";
         public const string PLUGIN_VERSION = "1.0.0";
-        
+
         public void Awake()
         {
             Logger.LogInfo($"Plugin {PLUGIN_GUID} is loaded!");
             var harmony = new Harmony(PLUGIN_GUID);
             harmony.PatchAll(typeof(Patches));
-        }
-
-        public void Update()
-        {
-            Projectile.init();
         }
     }
 }

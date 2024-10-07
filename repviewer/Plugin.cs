@@ -13,6 +13,8 @@ using static UnityEngine.ParticleSystem.PlaybackState;
 using Object = System.Object;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
+using Mono.Unix.Native;
+using System.Linq;
 
 
 
@@ -34,22 +36,57 @@ namespace repviewer
         private static GameObject[] buttons_file_replays;
         private static string game_path = BepInEx.Paths.GameRootPath;
         private static readonly string replays_path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).Replace("Roaming", "LocalLow"), "Johan Gronvall", "BoplBattle", "replays");
+        //erwer-repviewer
+        public static string debug_path = Path.Combine(BepInEx.Paths.BepInExRootPath, "plugins", "Unknown-repviewer");
         //replay menus
+        private static string current_replay = "None";
         private static GameObject replaymenu_text;
         private static GameObject replaymenu_screen;
+        private static GameObject favorite_replay_btn_gameplay;
         private static TextMeshProUGUI textComp;
         private static RectTransform location;
         public static bool replaymenu_toggled_fast = false;
         public static bool replaymenu_toggled_pause = false;
+        private Harmony harmony = new Harmony(PLUGIN_GUID);
+
+        // persistent data between two games.
+        public static List<String> favorited = new List<string>();
+        public static string gdpath() // Get the path to texture packs
+        {
+            return debug_path;
+        }
 
         private void Awake()
         {
             // Plugin startup logic
             // oh boy, here we go again.
             Logger.LogInfo($"Plugin {PLUGIN_GUID} is loaded!");
-            var harmony = new Harmony(PLUGIN_GUID);
+            Logger.LogInfo(debug_path);
             harmony.PatchAll(typeof(Patches));
+
+            // read favorites list.
+            try
+            {
+                using StreamReader reader = new(Path.Combine(gdpath(), "favorited.repview"));
+                string text = reader.ReadToEnd(); // Read the entire content as a string
+                favorited = text.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList(); // Split by new line
+                foreach (string fav in favorited)
+                    Debug.Log(fav);
+            } catch (Exception e) {
+                Debug.Log(e + "\n ErrrNoFind");
+            }
+
             replays = scan_replays();
+        }
+
+        private void OnApplicationQuit()
+        {
+            harmony.UnpatchSelf();
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine(gdpath(), "favorited.repview")))
+            {
+                foreach (string fav in favorited)
+                    outputFile.WriteLine(fav);
+            }
         }
 
         private void Update()
@@ -59,20 +96,36 @@ namespace repviewer
                 guistuff();
             }
         }
+        
 
         private static String[] scan_replays()
         {
             Debug.Log(replays_path);
-
             string[] files = Directory.GetFiles(replays_path);
             foreach (string file in files)
             {
                 Debug.Log(Path.GetFileName(file));
             }
-            return files;
+
+            // Sort mainList, moving elements in priorityList to the top
+            List<String> sortedList = files
+                .OrderByDescending(x => favorited.Contains(x))
+                .ThenBy(x => x)
+                .ToList();
+
+            return sortedList.ToArray();
         }
 
+        private static GameObject newtx(string name)
+        {
+            GameObject txt = new GameObject(name, new Type[2]
+            {
+                typeof(RectTransform),
+                typeof(TextMeshProUGUI)
+            });
 
+            return txt;
+        }
 
         private static void guistuff()
         {
@@ -98,7 +151,7 @@ namespace repviewer
                 // Ensure replaymenu_text is not null
                 if (replaymenu_text == null)
                 {
-                    
+
                     replaymenu_text = new GameObject("ReplayMenuText", new Type[2]
                     {
                          typeof(RectTransform),
@@ -107,25 +160,23 @@ namespace repviewer
                     replaymenu_text.transform.SetParent(((Component)canv).transform);
                     textComp = replaymenu_text.GetComponent<TextMeshProUGUI>();
                     ((Graphic)textComp).raycastTarget = false;
-                    ((TMP_Text)textComp).fontSize = 25f;
-                    ((TMP_Text)textComp).alignment = (TextAlignmentOptions)514;
+                    ((TMP_Text)textComp).fontSize = 20f;
+                    ((TMP_Text)textComp).alignment = TextAlignmentOptions.TopRight;
                     ((TMP_Text)textComp).font = LocalizedText.localizationTable.GetFont(Settings.Get().Language, false);
                     location = replaymenu_text.GetComponent<RectTransform>();
                     location.pivot = new Vector2(0f, 1f);
                     replaymenu_text.SetActive(true);
-                } else
+                }
+                else
                 {
                     StringBuilder textBuilder = new StringBuilder();
 
-                    textBuilder.Append("<#FF0000>Viewing Replay...<#FFFFFF>");
-                    textBuilder.Append(" ");
-                    textBuilder.Append("<#FFF000>Tilda(~) to leave replay ( Don't leave using ESCAPE )<#FFFFFF>");
-                    textBuilder.Append(" ");
-                    textBuilder.Append(replaymenu_toggled_fast ? "<#00FF00>2xSpeed(F1)<#FFFFFF>" : "<#FF0000>2x Speed(F1)<#FFFFFF>");
-                    textBuilder.Append(" ");
-                    textBuilder.Append(replaymenu_toggled_pause ? "<#00FF00>Pause(F3)<#FFFFFF>" : "<#FF0000>Pause(F3)<#FFFFFF>");
-                    
-                    
+                    textBuilder.AppendLine($"<#FF0000>Viewing Replay {current_replay} <#FFFFFF>");
+                    textBuilder.AppendLine("<#FFF000>Tilda(~) to leave replay.<#FFFFFF>");
+                    textBuilder.AppendLine(replaymenu_toggled_fast ? "<#00FF00>2xSpeed(F1)<#FFFFFF>" : "<#FF0000>2x Speed(F1)<#FFFFFF>");
+                    textBuilder.AppendLine(replaymenu_toggled_pause ? "<#00FF00>Pause(F3)<#FFFFFF>" : "<#FF0000>Pause(F3)<#FFFFFF>");
+
+
                     ((TMP_Text)textComp).text = textBuilder.ToString();
 
 
@@ -137,12 +188,61 @@ namespace repviewer
                     location.anchoredPosition = new Vector2(width / 2f - 325f, height / 2f - 100f - (float)num);
                 }
                 return;
-            } else if  (!GameLobby.isPlayingAReplay)
+            }
+            else if (!GameLobby.isPlayingAReplay)
             {
                 GameObject.Destroy(replaymenu_text);
                 Plugin.replaymenu_toggled_pause = false;
                 Plugin.replaymenu_toggled_fast = false;
             }
+
+            
+            if (!GameLobby.isPlayingAReplay && canvas != null && SceneManager.GetActiveScene().name.Contains("Level") && favorite_replay_btn_gameplay==null)
+            {
+                GameObject btn = newtx("Favorite");
+                Button btnComponent = btn.AddComponent<Button>();
+
+                btn.transform.SetParent(((Component)canv).transform);
+                textComp = btn.GetComponent<TextMeshProUGUI>();
+                ((Graphic)textComp).raycastTarget = true; 
+                ((TMP_Text)textComp).fontSize = 20f;
+                ((TMP_Text)textComp).alignment = TextAlignmentOptions.TopRight;
+                ((TMP_Text)textComp).font = LocalizedText.localizationTable.GetFont(Settings.Get().Language, false);
+                ((TMP_Text)textComp).text = "Favorite";
+
+                ColorBlock buttonColors = btnComponent.colors;
+                buttonColors.normalColor = new Color(1, 1, 1, 1f); // Button color
+                buttonColors.highlightedColor = new Color(0.3f, 0.7f, 1f, 1f); // Highlight color
+                buttonColors.pressedColor = new Color(0.1f, 0.5f, 0.8f, 1f); // Pressed color
+                buttonColors.disabledColor = new Color(0.5f, 0.5f, 0.5f, 1f); // Disabled color
+                btnComponent.colors = buttonColors;
+
+                btnComponent.targetGraphic = textComp;
+
+                location = btn.GetComponent<RectTransform>();
+                location.pivot = new Vector2(0f, 1f);
+                btn.SetActive(true);
+
+                Rect rect = ((Component)canv).GetComponent<RectTransform>().rect;
+                float height = ((Rect)(rect)).height;
+                rect = ((Component)canv).GetComponent<RectTransform>().rect;
+                float width = ((Rect)(rect)).width;
+                int num = 20;
+                location.anchoredPosition = new Vector2(width / 2f - 325f, height / 2f - 100f - (float)num);
+
+                // Run replay on click
+                btnComponent.onClick.AddListener(() => {
+                    Debug.Log($"Favorited : {Host.replaysSaved}, next one is {Host.replaysSaved + 1}");
+                    favorited.Add($"{Host.replaysSaved + 1}");
+                });
+                favorite_replay_btn_gameplay = btn;
+            }
+
+            else if (!SceneManager.GetActiveScene().name.Contains("Level") && favorite_replay_btn_gameplay != null)
+            {
+                GameObject.Destroy(favorite_replay_btn_gameplay);
+            }
+
             canvas = GameObject.Find("Canvas (1)");
             if (canvas == null)
             {
@@ -192,7 +292,6 @@ namespace repviewer
 
                     // Set parent to canvas
                     btnRectTransform.SetParent(component.transform, false);
-
                     replay_btn.SetActive(true);
                 }
 
@@ -204,10 +303,46 @@ namespace repviewer
                 // Initialize buttons_file_replays to the size of replays
                 buttons_file_replays = new GameObject[replays.Length];
 
+                if (GameObject.Find("scroller_replays") == null)
+                {
+                    // create the scrolling content first
+                    GameObject scroller_content = new GameObject("scroller_content");
+                    RectTransform rect_content = scroller_content.AddComponent<RectTransform>();
+                    rect_content.sizeDelta = new Vector2(400f, 75f);
+                    rect_content.anchorMin = new Vector2(1f, 1f);
+                    rect_content.anchorMax = new Vector2(1f, 1f);
+                    rect_content.pivot = new Vector2(1f, 1f);
+                    rect_content.anchoredPosition = new Vector2(-20f, -20f);
+                    // Set parent to canvas  
+                    scroller_content.SetActive(true);
+
+                    GameObject scroller_replays = new GameObject("scroller_replays");
+                    RectTransform rect = scroller_replays.AddComponent<RectTransform>();
+                    ScrollRect scroll = scroller_replays.AddComponent<ScrollRect>();
+                    // scroll settings
+                    scroll.horizontal = false;
+                    scroll.vertical = true;
+                    scroll.scrollSensitivity = 20;
+                    scroll.content = rect_content;
+
+                    // positioning
+                    rect.sizeDelta = new Vector2(400f, 75f);
+                    rect.anchorMin = new Vector2(1f, 1f); 
+                    rect.anchorMax = new Vector2(1f, 1f); 
+                    rect.pivot = new Vector2(1f, 1f); 
+                    rect.anchoredPosition = new Vector2(-20f, -20f);
+                    // Set parent to canvas
+                    rect.SetParent(component.transform, false);
+                    scroller_replays.SetActive(true);
+                    
+
+                    rect_content.SetParent(scroller_replays.transform, false);
+                }
+
                 for (int i = 0; i < replays.Length; i++)
                 {
                     string replay = replays[i];
-                    string rep = Path.GetFileName(replay);
+                    string rep = Path.GetFileNameWithoutExtension(replay);
 
                     // Create a new button for each replay
                     GameObject rep_button = new GameObject(rep + "_btn_load");
@@ -231,12 +366,20 @@ namespace repviewer
                     btnRectTransform.pivot = new Vector2(1f, 1f); // Pivot at the top-right of the button
 
                     // Adjust the position relative to the top-right corner
-                    btnRectTransform.anchoredPosition = new Vector2(-20f, (-75f * i) - 75f); // Slight offset to keep it within the canvas boundaries
+                    btnRectTransform.anchoredPosition = new Vector2(-20f, (-85f * i) - 75f); // Slight offset to keep it within the canvas boundaries
 
                     // Add TextMeshProUGUI for replay button label
                     TextMeshProUGUI btnText = rep_button.AddComponent<TextMeshProUGUI>();
                     btnText.text = rep;
-                    btnText.color = Color.black;
+                    if (favorited.Contains(rep))
+                    {
+                        btnText.color = new Color(1f,0.5f,0f);
+                    }
+                    else
+                    {
+                        btnText.color = Color.black;
+                    }
+
                     btnText.alignment = TextAlignmentOptions.Center;
                     btnText.font = LocalizedText.localizationTable.GetFont(Settings.Get().Language, false);
                     btnText.fontSize = width / 80f;
@@ -262,7 +405,7 @@ namespace repviewer
 
                     // Set parent to canvas (ensure the background is behind the button)
                     bgRectTransform.SetParent(btnRectTransform.transform, false); // Child of button to stay aligned
-                    btnRectTransform.SetParent(component.transform, false); // Set button to canvas parent
+                    btnRectTransform.SetParent(GameObject.Find("scroller_content").transform, false); // Set button to canvas parent
 
                     // Run replay on click
                     btnComponent.onClick.AddListener(() => run_replay(rep));
@@ -302,11 +445,13 @@ namespace repviewer
 
         private static void run_replay(string replayName)
         {
+            
             // Set the replay path for the Host class
             Host.recordReplay = false; //don't attempt to clone replays.
-            Host.replayPath = Path.Combine(replays_path, replayName); // Assuming replayName is the file name
+            Host.replayPath = Path.Combine(replays_path, replayName+".rep"); // Assuming replayName is the file name
             Debug.Log($"Loading replay from: {Host.replayPath}");
             Host curhost = GameObject.Find("networkClient").GetComponent<Host>();
+            current_replay = replayName;
 
             // Ensure the replay file exists
             if (File.Exists(Host.replayPath))
@@ -360,28 +505,27 @@ namespace repviewer
     public class Patches
     {
 
-        
-
-
         [HarmonyPatch(typeof(CharacterSelectHandler_online), "Awake")]
         static void Prefix(CharacterSelectBox __instance)
         {
            CharacterSelectHandler_online.clientSideMods_you_can_increment_this_to_enable_matchmaking_for_your_mods__please_dont_use_it_to_cheat_thats_really_cringe_especially_if_its_desyncing_others___you_didnt_even_win_on_your_opponents_screen___I_cannot_imagine_a_sadder_existence+=2;
         }
          
-        
-
-
         [HarmonyPatch(typeof(Host), nameof(Host.PlayReplayUpdate))]
         [HarmonyPrefix]
         public static bool PlayReplayUpdate(Host __instance)
         {
+            /*if (GameLobby.isPlayingAReplay)
+            {
+                return false;
+            }*/
 
             if(Keyboard.current.backquoteKey.wasPressedThisFrame)
             {
                 __instance.clients.Clear();
                 GameLobby.isPlayingAReplay = false;
                 Host.replayPath = "";
+
                 Debug.Log("A client was disconnected, abandoning lobby");
                 GameSessionHandler.LeaveGame(abandonLobbyEntirely: true);
                 Host.recordReplay = true;
@@ -472,11 +616,6 @@ namespace repviewer
                     break;
                 }
             }
-            if (__instance.clients.Count > 0)
-            {
-                __instance.renderDebugText(false);
-            }
-
             return false;
         }
     }
