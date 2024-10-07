@@ -39,6 +39,7 @@ modmaker.py
 *.exe
 *.xml
 *.rsp
+*.csproj
 
 # Visual Studio Code settings
 .vscode/
