@@ -1,2 +1,1 @@
-All of my mods,
-Also this is all apart of the MIT license
+All of my bopl battle mods. - erwer
