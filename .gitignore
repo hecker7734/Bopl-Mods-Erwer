@@ -1,10 +1,10 @@
-/!TOOLS
+# Build directories
 /bin
-/build
 /obj
-/ghost
 /Debug
 /.vs
+
+# Visual Studio specific files
 *.dll
 *.png
 *.pdn
@@ -15,8 +15,31 @@
 *.v2
 *.suo
 *.json
+
+# User-specific files
+*.user
+*.sln.docstates
+*.sln.ide
+*.sln.vspscc
+
+# Eclipse files
 /EclipseMenu
+
+# Other files
 modmaker.bat
 modmaker.py
 /MoreBoplPlayers
 /abilityplus
+/!TOOLS
+
+#otherx2
+*.txt
+*.bat
+*.py
+*.exe
+*.xml
+*.rsp
+
+# Visual Studio Code settings
+.vscode/
+/ghost
