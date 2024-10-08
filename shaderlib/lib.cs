@@ -71,6 +71,13 @@ namespace shaderlib
             return null;
         }
 
+        public static Material MaterialFromShader(Shader shader)
+        {
+            Material _material = new Material(shader);
+            return _material;
+        }
+
+
         public static CameraShader CreateCameraShader(Shader shader, Material material)
         {
             return new CameraShader(shader, material);
