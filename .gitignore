@@ -44,3 +44,5 @@ modmaker.py
 # Visual Studio Code settings
 .vscode/
 /ghost
+shaderlib/bin/Debug/net46/vectorart.assetbundle
+shaderlib/shaderlib.csproj
