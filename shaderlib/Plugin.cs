@@ -34,9 +34,9 @@ namespace shaderlib
     }
     public class Patches
     {
-        [HarmonyPatch(typeof(BoplBody), nameof(BoplBody.Awake))]
+        [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.Awake))]
         [HarmonyPostfix]
-        public static void sh(BoplBody __instance) {
+        public static void sh(PlayerPhysics __instance) {
             shaderlib.AddMaterialToGameObject component = __instance.gameObject.AddComponent<shaderlib.AddMaterialToGameObject>();
             component.newMaterial = Plugin.vectuh;
         }
