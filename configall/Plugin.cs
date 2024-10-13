@@ -162,11 +162,19 @@ namespace configall
         [HarmonyPostfix]
         public static void patch_tap_grenade(ThrowItem2 __instance)
         {
-            if(Plugin.tapnade.Value)
+           Debug.Log($"patch_tap_grenade called. tapnade.Value: {Plugin.tapnade.Value}");
+
+            if (Plugin.tapnade.Value)
             {
                 __instance.ThrowForceGainSpeed = (Fix)900L;
+                Debug.Log("Tapnade is enabled.");
+            }
+            else
+            {
+                Debug.Log("Tapnade is disabled.");
             }
         }
+
 
 
 
