@@ -37,7 +37,7 @@ namespace repviewer
         private static string game_path = BepInEx.Paths.GameRootPath;
         private static readonly string replays_path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).Replace("Roaming", "LocalLow"), "Johan Gronvall", "BoplBattle", "replays");
         //erwer-repviewer
-        public static string debug_path = Path.Combine(BepInEx.Paths.BepInExRootPath, "plugins", "Unknown-repviewer");
+        public static string debug_path = Path.Combine(BepInEx.Paths.BepInExRootPath, "plugins", "erwer-repviewer");
         //replay menus
         private static string current_replay = "None";
         private static GameObject replaymenu_text;
@@ -51,7 +51,7 @@ namespace repviewer
 
         // persistent data between two games.
         public static List<String> favorited = new List<string>();
-        public static string gdpath() // Get the path to texture packs
+        public static string gdpath()
         {
             return debug_path;
         }
@@ -448,7 +448,7 @@ namespace repviewer
             
             // Set the replay path for the Host class
             Host.recordReplay = false; //don't attempt to clone replays.
-            Host.replayPath = Path.Combine(replays_path, replayName+".rep"); // Assuming replayName is the file name
+            Host.replayPath = Path.Combine(replays_path, replayName+".rep");
             Debug.Log($"Loading replay from: {Host.replayPath}");
             Host curhost = GameObject.Find("networkClient").GetComponent<Host>();
             current_replay = replayName;
@@ -457,7 +457,6 @@ namespace repviewer
             if (File.Exists(Host.replayPath))
             {
                 //try to add the clients..
-
                 string text = Host.replayPath;
                 if (text != null)
                 {
@@ -476,10 +475,6 @@ namespace repviewer
                     float duration = duration_of_replay(File.ReadAllBytes(text));
                     Debug.Log( "Raw Duration : " + duration   );
                     Debug.Log( "Second Guess Duration : " + Math.Round(duration / 79));
-
-
-
-                    
                 }
 
 

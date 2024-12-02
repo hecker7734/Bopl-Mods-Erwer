@@ -9,6 +9,17 @@ using static UnityEngine.ParticleSystem.PlaybackState;
 
 namespace IUpdateable
 {
+    public interface IUpdatable
+    {
+        void Init();
+        void UpdateSim(Fix SimDeltaTime);
+        void LateUpdateSim(Fix SimDeltaTime);
+        void OnDestroyUpdatable();
+        bool IsEnabled();
+        bool IsDestroyed { get; set; }
+        int HierarchyNumber { get; set; }
+    }
+
     [BepInPlugin(PLUGIN_GUID, PLUGIN_NAME, PLUGIN_VERSION)]
     public class Plugin : BaseUnityPlugin
     {
@@ -25,10 +36,9 @@ namespace IUpdateable
         }
     }
 
-
     public class Patches
     {
-        [HarmonyPatch(typeof(Updater),nameof(Updater.Update))]
+        [HarmonyPatch(typeof(Updater), nameof(Updater.Update))]
         [HarmonyPrefix]
         public static bool Update(Updater __instance)
         {
@@ -51,39 +61,7 @@ namespace IUpdateable
                     }
                 }
             }
-            return false; //skip OG.
+            return false;
         }
     }
-
-    
-
-// Token: 0x020000DE RID: 222
-    public interface IUpdatable
-    {
-           // Token: 0x060006BB RID: 1723
-            void Init();
-    
-            // Token: 0x060006BC RID: 1724
-            void UpdateSim(Fix SimDeltaTime);
-    
-            // Token: 0x060006BD RID: 1725
-            void LateUpdateSim(Fix SimDeltaTime);
-    
-            // Token: 0x060006BE RID: 1726
-            void OnDestroyUpdatable();
-    
-            // Token: 0x060006BF RID: 1727
-            bool IsEnabled();
-    
-            // Token: 0x17000086 RID: 134
-            // (get) Token: 0x060006C0 RID: 1728
-            // (set) Token: 0x060006C1 RID: 1729
-            bool IsDestroyed { get; set; }
-
-            // Token: 0x17000087 RID: 135
-            // (get) Token: 0x060006C2 RID: 1730
-            // (set) Token: 0x060006C3 RID: 1731
-           int HierarchyNumber { get; set; }
-    }
-
 }

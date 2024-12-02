@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "D:\\SteamLibrary\\steamapps\\common\\Bopl Battle - Modded\\Modding\\BoplBattleTemplate\\AGoodNameLib\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{68D1805D-BCB6-4488-9A9E-B9291D091474}|AGoodNameLib.csproj|d:\\steamlibrary\\steamapps\\common\\bopl battle - modded\\modding\\boplbattletemplate\\agoodnamelib\\til.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{68D1805D-BCB6-4488-9A9E-B9291D091474}|AGoodNameLib.csproj|solutionrelative:til.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{68D1805D-BCB6-4488-9A9E-B9291D091474}|AGoodNameLib.csproj|d:\\steamlibrary\\steamapps\\common\\bopl battle - modded\\modding\\boplbattletemplate\\agoodnamelib\\plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{68D1805D-BCB6-4488-9A9E-B9291D091474}|AGoodNameLib.csproj|solutionrelative:plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{68D1805D-BCB6-4488-9A9E-B9291D091474}|AGoodNameLib.csproj|d:\\steamlibrary\\steamapps\\common\\bopl battle - modded\\modding\\boplbattletemplate\\agoodnamelib\\til.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{68D1805D-BCB6-4488-9A9E-B9291D091474}|AGoodNameLib.csproj|solutionrelative:til.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,29 +18,30 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Plugin.cs",
               "DocumentMoniker": "D:\\SteamLibrary\\steamapps\\common\\Bopl Battle - Modded\\Modding\\BoplBattleTemplate\\AGoodNameLib\\Plugin.cs",
               "RelativeDocumentMoniker": "Plugin.cs",
               "ToolTip": "D:\\SteamLibrary\\steamapps\\common\\Bopl Battle - Modded\\Modding\\BoplBattleTemplate\\AGoodNameLib\\Plugin.cs",
               "RelativeToolTip": "Plugin.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABUAAAAJAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABcAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-30T01:41:55.749Z"
+              "WhenOpened": "2024-09-30T01:41:55.749Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "til.cs",
               "DocumentMoniker": "D:\\SteamLibrary\\steamapps\\common\\Bopl Battle - Modded\\Modding\\BoplBattleTemplate\\AGoodNameLib\\til.cs",
               "RelativeDocumentMoniker": "til.cs",
               "ToolTip": "D:\\SteamLibrary\\steamapps\\common\\Bopl Battle - Modded\\Modding\\BoplBattleTemplate\\AGoodNameLib\\til.cs",
               "RelativeToolTip": "til.cs",
-              "ViewState": "AQIAAK4AAAAAAAAAAAA7wMYAAAAFAAAA",
+              "ViewState": "AQIAAK8AAAAAAAAAAAAkwMYAAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-05T18:11:24.741Z",
               "EditorCaption": ""

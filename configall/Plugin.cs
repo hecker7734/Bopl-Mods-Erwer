@@ -41,6 +41,8 @@ namespace configall
         internal static ConfigEntry<bool> tapbow;
         internal static ConfigEntry<bool> tapnade;
 
+        internal static ConfigEntry<bool> disable_sudden_death;
+
         // Assuming Fix is a class or struct that has a constructor accepting a float
         public static Dictionary<string, float> allAbilities = new Dictionary<string, float>
 {
@@ -79,7 +81,8 @@ namespace configall
             { "revive", "Revival" },
             { "dupe", "Duplicator Ray" },
             { "gust", "Gust" },
-            { "tap", "tap items"}
+            { "tap", "tap items"},
+            { "sudden_death", "Sudden Death" }
         };
 
         /*
@@ -91,9 +94,10 @@ namespace configall
          * 
          * 
          * Beam         X
-         * revival      -
+         * revival      ?
          * Duplicator   X 
          * Gust         X
+         * Sudden Death -
          */
 
 
@@ -117,19 +121,14 @@ namespace configall
             AGoodNameLib.auto_config.Slider<float>(ref gust_radius, config, config_set["gust"], "Changes the radius of gust.", 5f, 1f, 100f);
             AGoodNameLib.auto_config.Slider<float>(ref gust_strength, config, config_set["gust"], "Changes the strength (multiplier) of gust.", 1f, 1f, 100f);
 
-            // Assuming 'config' is an instance of a configuration manager or similar
             foreach (var cfg in allAbilities)
             {
-                // Bind or load the config entry
                 ConfigEntry<float> configEntry = config.Bind(
                     "Cooldowns",
                     cfg.Key,
                     cfg.Value,
                     new ConfigDescription($"Cooldown for {cfg.Key} ability")
                 );
-
-                // Optionally, you might want to store these entries if needed later
-                // For example, in a dictionary to easily access them by ability name
                 configEntries[cfg.Key] = configEntry;
             }
 
@@ -139,6 +138,7 @@ namespace configall
 
             util.CheckBox(ref tapbow, config, config_set["tap"], "Instantly Charge Bows", false);
             util.CheckBox(ref tapnade, config, config_set["tap"], "Instantly Charge Grenades", false);
+            util.CheckBox(ref disable_sudden_death, config, config_set["sudden_death"], "Disables Sudden Death", false);
 
             var harmony = new Harmony(PLUGIN_GUID);
             harmony.PatchAll(typeof(Patches));
@@ -148,6 +148,17 @@ namespace configall
 
     public partial class Patches
     {
+
+        [HarmonyPatch(typeof(GameSessionHandler), "Awake")]
+        [HarmonyPostfix]
+        public static void Postfix(GameSessionHandler __instance)
+        {
+            if(Plugin.disable_sudden_death.Value == false)
+            {   
+                __instance.TimeBeforeSuddenDeath = (Fix)99999f;
+            }
+        }
+
         [HarmonyPatch(typeof(BowTransform), nameof(BowTransform.OnEnterAbility))]
         [HarmonyPostfix]
         public static void patch_tap(BowTransform __instance)
