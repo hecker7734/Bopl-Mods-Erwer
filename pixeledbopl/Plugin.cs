@@ -78,8 +78,7 @@ namespace pixeledbopl
 
         private void LoadAssetBundle()
         {
-            // Specify the path to your AssetBundle
-            string assetBundlePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "shaderpixel"); // Adjust this path if necessary
+            string assetBundlePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "shaderpixel");
             Debug.Log(assetBundlePath);
 
             pixelArtAssetBundle = AssetBundle.LoadFromFile(assetBundlePath);
@@ -97,12 +96,12 @@ namespace pixeledbopl
             if (pixelArtAssetBundle != null)
             {
                 // Load the shader from the AssetBundle
-                pixelArtShader = pixelArtAssetBundle.LoadAsset<Shader>("Pixelation"); // Replace "Pixelation" with the actual name of the shader
+                pixelArtShader = pixelArtAssetBundle.LoadAsset<Shader>("Pixelation");
 
                 if (pixelArtShader != null)
                 {
                     pixelArtMaterial = new Material(pixelArtShader);
-                    pixelArtMaterial.SetFloat("_PixelSize", pixelation.Value /*0.001f*/); // Set the pixel size if needed
+                    pixelArtMaterial.SetFloat("_PixelSize", pixelation.Value /*0.001f*/);
                     Logger.LogInfo("Pixel Art Shader loaded successfully!");
                 }
                 else
